@@ -315,7 +315,7 @@ class Kohana_Worksheet {
      * 
      * @access public
      */
-    public function read($valuetypes = array(), $skip = array(), $emptyvalues = FALSE) {
+    public function read($valuetypes = array(), $skip = array(), $emptyvalues = FALSE, $columns = array()) {
 
         /**
          * @var array $array_data save parsed data from spreadsheet
@@ -337,19 +337,21 @@ class Kohana_Worksheet {
              * @var PHPExcel_Cell $cell
              */
             foreach ($cellIterator as $cell) {
-                if (!empty($valuetypes) AND array_key_exists($cell->getColumn(), $valuetypes)) {
-                    $format = explode(':', $valuetypes[$cell->getColumn()]);
+				$c = $cell->getColumn();
+            	$column = Arr::get($columns, $c, $c);
+                if (!empty($valuetypes) AND array_key_exists($column, $valuetypes)) {
+                    $format = explode(':', $valuetypes[$column]);
                     switch ($format[0]) {
                         case 'date' :
                             $date = PHPExcel_Shared_Date::ExcelToPHPObject($cell->getValue());
-                            $array_data[$rowIndex][$cell->getColumn()] = $date->format($format[1]);
+                            $array_data[$rowIndex][$column] = $date->format($format[1]);
                             break;
                     }
                 } else {
 
                     // check if is_null or empty
                     $value = $cell->getValue();
-                    $array_data[$rowIndex][$cell->getColumn()] = (strtolower($value) == 'null' OR empty($value)) ? null : $cell->getCalculatedValue();
+                    $array_data[$rowIndex][$column] = (strtolower($value) == 'null' OR empty($value)) ? null : $cell->getCalculatedValue();
                 }
 
                 // For check empty values

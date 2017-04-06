@@ -196,14 +196,15 @@ class Kohana_Spreadsheet {
      * @param array $valuetypes
      * @param array $skip content only numbers
      * @param boolean $emptyvalues
+	 * @param array $columns columns alias
      * @return array 
      * 
      * @example
      * skip is an array with content only numbers, 1, 2, 3 ...
      * $emptyvalues remove arrays only if the all cells are empty
      */
-    public function read($valuetypes = array(), $skip = array(), $emptyvalues = FALSE) {
-        return $this->get_active_worksheet()->read($valuetypes, $skip, $emptyvalues);
+    public function read($valuetypes = array(), $skip = array(), $emptyvalues = FALSE, $columns = array()) {
+        return $this->get_active_worksheet()->read($valuetypes, $skip, $emptyvalues, $columns);
     }
 
     /**
@@ -240,7 +241,17 @@ class Kohana_Spreadsheet {
         return $this->_worksheets[$this->_spreadsheet->getActiveSheetIndex()];
     }
 
-    /**
+	public function get_highest_column ($as_number = FALSE) {
+		$sheet = $this->_spreadsheet->getActiveSheet();
+		$column = $sheet->getHighestColumn();
+
+		if ($as_number)
+			$column = PHPExcel_Cell::columnIndexFromString($column);
+
+		return $column;
+	}
+
+	/**
      * Get one or more worksheets
      * 
      * @return mixed one more worksheets
@@ -261,8 +272,7 @@ class Kohana_Spreadsheet {
      * @param mixed $arguments arguments
      */
     public function __call($method_name, $arguments) {
-
-        $this->_spreadsheet->$method_name($arguments);
+        return $this->_spreadsheet->$method_name($arguments);
     }
 
     /**
