@@ -351,7 +351,7 @@ class Kohana_Worksheet {
 
                     // check if is_null or empty
                     $value = $cell->getValue();
-                    $array_data[$rowIndex][$column] = (strtolower($value) == 'null' OR empty($value)) ? null : $cell->getCalculatedValue();
+                    $array_data[$rowIndex][$column] = (strtolower($value) == 'null' OR empty($value)) ? null : trim($cell->getCalculatedValue());
                 }
 
                 // For check empty values
